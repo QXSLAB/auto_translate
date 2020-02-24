@@ -28,42 +28,65 @@ def translate(content,tk):
     if end > 4:    
         print(result[4:end])
 
+
+def parse_byte():
+    
+    #pastes = gettext().decode('UTF-8', 'ignore')
+    pastes = gettext().decode('GBK')
+    pastes = pastes.strip().strip(b'\x00'.decode())
+    pastes = pastes.replace('\r\n',' ')
+    pastes = pastes.lower()
+    pastes = pastes.replace('e.g.','such as ')
+    pastes = pastes.replace('etc.','such as ')
+    pastes = pastes.replace('et al.','')
+    pastes = pastes.replace('<','less than ')
+    pastes = pastes.replace('vs.','versus')
+    pastes = pastes.replace('v.s.','versus')
+    return pastes
+
 old = ''
 
+def on_release(key):
+    
+    global old
+    
+    if key is keyboard.Key.ctrl_l:
+        
+        pastes = parse_byte()
+        old = old + ' ' + pastes
+
 def on_press(key):
-    
-    #print(key);
-    
-    #import pdb
-    #pdb.set_trace()
+
+    global old
+
+    #if str(key) == "'`'":
+
+        #pastes = parse_byte()
+        #old = old + ' ' + pastes
+
+    if str(key) == "'`'":
+
+        old = ' '
 
     if key is keyboard.Key.esc:
 
-        #pastes = gettext().decode('UTF-8', 'ignore')
-        pastes = gettext().decode('GBK')
-        pastes = pastes.strip().strip(b'\x00'.decode())
-        pastes = pastes.replace('\r\n',' ')
-        pastes = pastes.lower()
-        pastes = pastes.replace('e.g.','such as ')
-        pastes = pastes.replace('etc.','such as ')
-        pastes = pastes.replace('et al.','')
-        pastes = pastes.replace('<','less than ')
-    
-        global old
-        if pastes != old:
-  
-            old = pastes[:]
+        pastes = old
 
-            #sentences = pastes.split('.')
-            sentences = re.split('[.?!;] ', pastes)
+        old = ''
+        
 
-            for content in sentences:
+        #sentences = pastes.split('.')
+        sentences = re.split('[.?!;] ', pastes)
+
+        for content in sentences:
             
-                js = Py4Js()
-                tk = js.getTk(content)    
-                translate(content,tk)  
-                print(content)
-                print()
+            js = Py4Js()
+            tk = js.getTk(content)    
+            translate(content,tk)  
+            print(content)
+            print()
 
-with keyboard.Listener(on_press=on_press) as listener:
+        print('````````````````````````````````````````````````')
+
+with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
     listener.join()

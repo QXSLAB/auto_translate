@@ -10,11 +10,17 @@ import win32con
 
 def gettext():
 
-    w.OpenClipboard()
+    try:
 
-    t = w.GetClipboardData(win32con.CF_TEXT)
-    w.CloseClipboard()
+        w.OpenClipboard()
 
-    return t
+        t = w.GetClipboardData(win32con.CF_TEXT)
+        w.CloseClipboard()
+
+        return t
+    
+    except:
+
+        return b'error.'
 
 #print(gettext())

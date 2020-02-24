@@ -32,26 +32,36 @@ def main():
 
     old = ''
 
+    para = ''
+
     while 1:
 
         time.sleep(1)
 
         pastes = gettext().decode('UTF-8', 'ignore').strip().strip(b'\x00'.decode())
         pastes = pastes.replace('\r\n',' ')
+
+        if pastes == 'error.':
+            continue
     
         if pastes != old:
   
             old = pastes[:]
+
+            para = para + pastes
+
+            if para[-1] != '.' and para[-1] != '?' and para[-1] != '!':
+                continue
 
             #sentences = pastes.split('.')
 
             #import pdb
             #pdb.set_trace() 
 
-            sentences = re.split('[.?!;]', pastes)
+            sentences = re.split('[.?!;] ', para)
 
+            para = ''
 
- 
             for content in sentences:
             
                 if content == 'q!':    
@@ -62,6 +72,10 @@ def main():
                 translate(content,tk)  
                 print(content)
                 print()
+
+            print()
+            print()
+            print()
     
         
 if __name__ == "__main__":    
